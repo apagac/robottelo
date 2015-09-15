@@ -8,11 +8,6 @@ from ddt import data, ddt
 class ComputeResourceTestCase(UITestCase):
 
     #TODO create this in config file
-    #current_rhev_url = conf.properties['main.rhev.hostname']
-    #rhev_name = conf.properties['main.rhev.name']
-    #rhev_username = conf.properties['main.rhev.username']
-    #rhev_password = conf.properties['main.rhev.password']
-    #rhev_datacenter = conf.properties['main.rhev.datacenter']
     default_org = 'Default Organization'
     default_loc = 'Default Location'
 
@@ -57,3 +52,34 @@ class ComputeResourceTestCase(UITestCase):
 
     def test_delete_compute_resource(self):
         pass
+
+    def test_retrieve_vm_list(self):
+        pass
+
+    def test_retrieve_template_list(self):
+        pass
+
+    def test_vm_start_stop(self):
+        pass
+
+    def test_delete_vm(self):
+        pass
+
+    def test_add_image(self):
+        pass
+
+    def test_delete_image(self):
+        pass
+
+    def test_provision_image(self):
+        pass
+
+    #default and custom compute profile
+    def test_provision_image_with_compute_profile(self):
+        pass
+
+    #to specific folder, static IP & custom spec,
+    # configure DNS & domain settings
+    def test_provision_vm(self):
+        pass
+
