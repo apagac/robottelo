@@ -25,7 +25,7 @@ class ComputeResourceTestCase(UITestCase):
          'password': conf.properties['main.vmware.password'],
          'datacenter': conf.properties['main.vmware.datacenter']}
     )
-    def test_create_compute_resource(self):
+    def test_create_compute_resource(self, data):
         """Create rhev and vmware compute resource"""
         with Session(self.browser) as session:
             make_resource(
@@ -44,14 +44,35 @@ class ComputeResourceTestCase(UITestCase):
                 locations=[self.default_loc],
                 loc_select=True
             )
-            search = self.compute_resource.search(self.rhev_name)
+            search = self.compute_resource.search(data['name'])
             self.assertIsNotNone(search)
 
-    def test_edit_compute_resource(self):
-        pass
+    @data(
+        {'name': conf.properties['main.rhev.name'],
+         'new_name': '%s-updated' % conf.properties['main.rhev.name']},
+        {'name': conf.properties['main.vmware.name'],
+         'new_name': '%s-updated' % conf.properties['main.vmware.name']}
+    )
+    def test_edit_compute_resource(self, data):
+        with Session(self.browser) as session:
+            search = self.compute_resource.search(data['name'])
+            self.assertIsNotNone(search)
+            self.compute_resource.update(name=data['name'], newname=data['new_name'])
+            search = self.compute_resource.search(data['new_name'])
+            self.assertIsNotNone(search)
 
-    def test_delete_compute_resource(self):
-        pass
+    @data( #TODO
+        {'name': 'placeholder'},
+        {'name': 'placeholder'}
+    )
+    def test_delete_compute_resource(self, data):
+        with Session(self.browser) as session:
+            search = self.compute_resource.search(data['name'])
+            self.assertIsNotNone(search)
+            self.compute_resource.delete(data['name'])
+            search = self.compute_resource.search(data['name'])
+            self.assertIsNone(search)
+
 
     def test_retrieve_vm_list(self):
         pass
