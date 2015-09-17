@@ -1,79 +1,88 @@
 from robottelo.test import UITestCase
-from robottelo.config import conf
+from robottelo.common import conf
 from robottelo.ui.session import Session
-from robottelo.constants import FOREMAN_PROVIDERS
+from robottelo.common.constants import FOREMAN_PROVIDERS
 from robottelo.ui.factory import make_resource
 from ddt import data, ddt
 
+@ddt
 class ComputeResourceTestCase(UITestCase):
 
     #TODO create this in config file
     default_org = 'Default Organization'
     default_loc = 'Default Location'
 
-    @data(
-        {'name': conf.properties['main.rhev.name'],
-         'type': 'rhev',
-         'url': conf.properties['main.rhev.hostname'],
-         'username': conf.properties['main.rhev.username'],
-         'password': conf.properties['main.rhev.password'],
-         'datacenter':conf.properties['main.rhev.datacenter']},
-        {'name': conf.properties['main.vmware.name'],
-         'type': 'vmware',
-         'url': conf.properties['main.vmware.hostname'],
-         'username': conf.properties['main.vmware.username'],
-         'password': conf.properties['main.vmware.password'],
-         'datacenter': conf.properties['main.vmware.datacenter']}
-    )
-    def test_create_compute_resource(self, data):
-        """Create rhev and vmware compute resource"""
+    rhev_name='apagac-rhev-res'
+    rhev_hostname_api='https://engine.cfme.lab.eng.rdu2.redhat.com/api'
+    rhev_username='admin@internal'
+    rhev_password='changeme'
+    rhev_datacenter='Default'
+
+    def test_create_delete_rhev_compute_resource(self):
         with Session(self.browser) as session:
             make_resource(
                 session,
-                name=data['name'],
-                provider_type=FOREMAN_PROVIDERS[data['type']],
+                name=self.rhev_name,
+                provider_type=FOREMAN_PROVIDERS['rhev'],
                 parameter_list=[
-                    ['URL', data['url'], 'field'],
-                    ['Username', data['username'], 'field'],
-                    ['Password', data['password'], 'field'],
-                    #TODO this is different with rhev and with vmware
+                    ['URL', self.rhev_hostname_api, 'field'],
+                    ['Username', self.rhev_username, 'field'],
+                    ['Password', self.rhev_password, 'field'],
                     ['Datacenter', self.rhev_datacenter, 'special select']
                 ],
                 orgs=[self.default_org],
-                org_select=True,
+                org_select=False,
                 locations=[self.default_loc],
                 loc_select=True
             )
-            search = self.compute_resource.search(data['name'])
+            search = self.compute_resource.search(self.rhev_name)
             self.assertIsNotNone(search)
+            self.compute_resource.delete(self.rhev_name)
+            search = self.compute_resource.search(self.rhev_name)
+            self.assertIsNone(search)
+
+    #def test_create_vmware_compute_resource(self):
+    #    pass
+
+    #def test_create_osp_compute_resource(self):
+    #    pass
+
+    #def test_create_docker_compute_resource(self):
+    #    pass
 
     @data(
-        {'name': conf.properties['main.rhev.name'],
-         'new_name': '%s-updated' % conf.properties['main.rhev.name']},
-        {'name': conf.properties['main.vmware.name'],
-         'new_name': '%s-updated' % conf.properties['main.vmware.name']}
+        {'name': rhev_name,
+         'new_name': '%s-updated' % rhev_name},
+        #{'name': 'vmware name'},
+        #{'name': 'osp name'},
+        #{'name': 'docker name'}
     )
     def test_edit_compute_resource(self, data):
         with Session(self.browser) as session:
-            search = self.compute_resource.search(data['name'])
+            make_resource(
+                session,
+                name=self.rhev_name,
+                provider_type=FOREMAN_PROVIDERS['rhev'],
+                parameter_list=[
+                    ['URL', self.rhev_hostname_api, 'field'],
+                    ['Username', self.rhev_username, 'field'],
+                    ['Password', self.rhev_password, 'field'],
+                    ['Datacenter', self.rhev_datacenter, 'special select']
+                ],
+                orgs=[self.default_org],
+                org_select=False,
+                locations=[self.default_loc],
+                loc_select=True
+            )
+            search = self.compute_resource.search(self.rhev_name)
             self.assertIsNotNone(search)
             self.compute_resource.update(name=data['name'], newname=data['new_name'])
             search = self.compute_resource.search(data['new_name'])
             self.assertIsNotNone(search)
-
-    @data( #TODO
-        {'name': 'placeholder'},
-        {'name': 'placeholder'}
-    )
-    def test_delete_compute_resource(self, data):
-        with Session(self.browser) as session:
-            search = self.compute_resource.search(data['name'])
-            self.assertIsNotNone(search)
-            self.compute_resource.delete(data['name'])
-            search = self.compute_resource.search(data['name'])
+            self.compute_resource.delete(data['new_name'])
             self.assertIsNone(search)
 
-
+    """
     def test_retrieve_vm_list(self):
         pass
 
@@ -103,4 +112,4 @@ class ComputeResourceTestCase(UITestCase):
     # configure DNS & domain settings
     def test_provision_vm(self):
         pass
-
+    """
