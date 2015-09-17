@@ -12,11 +12,11 @@ class ComputeResourceTestCase(UITestCase):
     default_org = 'Default Organization'
     default_loc = 'Default Location'
 
-    rhev_name='apagac-rhev-res'
-    rhev_hostname_api='https://engine.cfme.lab.eng.rdu2.redhat.com/api'
-    rhev_username='admin@internal'
-    rhev_password='changeme'
-    rhev_datacenter='Default'
+    rhev_name=''
+    rhev_hostname_api=''
+    rhev_username=''
+    rhev_password=''
+    rhev_datacenter=''
 
     def test_create_delete_rhev_compute_resource(self):
         with Session(self.browser) as session:
