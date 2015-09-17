@@ -68,8 +68,8 @@ class ComputeResource(Base):
                     'button'
                 ))
                 self.click(locators[button_locator])
-                self.find_element(
-                    locators[param_locator]
+                Select(
+                    self.find_element(locators[param_locator])
                 ).select_by_visible_text(parameter_value)
 
     def _configure_orgs(self, orgs, org_select):
