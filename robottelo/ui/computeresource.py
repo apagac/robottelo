@@ -149,3 +149,12 @@ class ComputeResource(Base):
             locators['resource.delete'],
             drop_locator=locators['resource.dropdown']
         )
+
+    def list_vms(self):
+        pass
+
+    def list_images(self):
+        pass
+
+    def list_compute_profiles(self):
+        pass
