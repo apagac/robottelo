@@ -142,6 +142,8 @@ class ComputeResource(Base):
 
     def delete(self, name, really=True):
         """Removes the compute resource entity"""
+        #TODO added to make delete work when called with different context
+        Navigator(self.browser).go_to_compute_resources()
         self.delete_entity(
             name,
             really,
@@ -150,8 +152,19 @@ class ComputeResource(Base):
             drop_locator=locators['resource.dropdown']
         )
 
-    def list_vms(self):
-        pass
+    def list_vms(self, res_name):
+        resource = self.search(res_name)
+        #TODO if not found
+        strategy, value = locators['resource.get_by_name']
+        locator = (strategy, value % res_name)
+        self.click(locator)
+        self.wait_until_element(locators['resource.virtual_machines_tab'])
+        self.click(locators['resource.virtual_machines_tab'])
+        #TODO if not foud
+        #vms = self.find_element(locators['resource.virtual_machines'])
+        vms = self.browser.find_elements_by_xpath(
+            "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]" % res_name)
+        return vms
 
     def list_images(self):
         pass

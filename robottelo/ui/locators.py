@@ -859,6 +859,28 @@ locators = LocatorDict({
     "resource.edit": (
         By.XPATH, "//a[contains(@data-id,'edit') and contains(@href,'%s')]"),
 
+    # TODO testing locators
+
+    "resource.virtual_machines_tab": (
+        By.XPATH,
+        "//a[contains(@href, 'vms')]"
+    ),
+    "resource.virtual_machines": (
+        By.XPATH,
+        #"//table[@id='DataTables_Table_0']//a"
+        #"//table[contains(@id, 'DataTables')]//*[contains(@data-id, 'vms')]"
+        #"//table[contains(@id, 'DataTables')]/../a"
+        #"//table[contains(@id, 'DataTables')]/tbody//tr/td/a"
+        #"//a[contains(@data-id, %s)]"
+        #"//a[contains(@href, %s)]"
+        "//a[contains(@href, 'vms')]"
+    ),
+    "resource.get_by_name": (
+        By.XPATH,
+        #"//a[not(contains(@data-id, 'edit')) and contains(@href, '%s')]"
+        "//a[not(contains(@href, 'search')) and contains(@href, '%s')]"
+    ),
+
     # Hosts
 
     # host.primary
