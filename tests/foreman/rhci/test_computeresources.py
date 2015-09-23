@@ -105,10 +105,27 @@ class ComputeResourceTestCase(UITestCase):
                     print "VM: %s" % item.text
             self.compute_resource.delete(self.rhev_name)
 
-    """
     def test_retrieve_template_list(self):
-        pass
+        with Session(self.browser) as session:
+            make_resource(
+                name=self.rhev_name,
+                provider_type=FOREMAN_PROVIDERS['rhev'],
+                parameter_list=[
+                    ['URL', self.rhev_hostname_api, 'field'],
+                    ['Username', self.rhev_username, 'field'],
+                    ['Password', self.rhev_password, 'field'],
+                    ['Datacenter', self.rhev_datacenter, 'special select']
+                ],
+                orgs=[self.default_org],
+                org_select=False,
+                locations=[self.default_loc],
+                loc_select=True
+            )
+            for item in self.compute_resource.list_images(self.rhev_name):
+                print "Image: %s" % item.text
+            self.compute_resource.delete(self.rhev_name)
 
+    """
     def test_vm_start_stop(self):
         pass
 

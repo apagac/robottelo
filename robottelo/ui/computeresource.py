@@ -163,11 +163,30 @@ class ComputeResource(Base):
         #TODO if not foud
         #vms = self.find_element(locators['resource.virtual_machines'])
         vms = self.browser.find_elements_by_xpath(
+            #TODO needs correcting, see list_images
             "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]" % res_name)
         return vms
 
-    def list_images(self):
-        pass
+    #TODO it fime permits, this:
+    #def add_image(self):
+    #    pass
+
+    def list_images(self, res_name):
+        resource = self.search(res_name)
+        #TODO if not found
+        strategy, value = locators['resource.get_by_name']
+        locator = (strategy, value % res_name)
+        self.click(locator)
+        self.wait_until_element(locators['resource.images_tab'])
+        self.click(locators['resource.images_tab'])
+        #TODO if not found
+        images = self.browser.find_elements_by_xpath(
+            #"//table[contains(@id, 'DataTables')]/tbody//tr/td[1]")
+            #"//table[contains(@id, 'DataTables')]/tbody/tr/*[1]")
+            "//table[contains(@id, 'DataTables_Table_0')]/tbody/tr/*[1]")
+        return images
+
+
 
     def list_compute_profiles(self):
         pass

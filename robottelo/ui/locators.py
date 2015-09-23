@@ -865,6 +865,13 @@ locators = LocatorDict({
         By.XPATH,
         "//a[contains(@href, 'vms')]"
     ),
+    "resource.images_tab": (
+        By.XPATH,
+        #"//a[contains(@href, 'images')]"
+        #"//a[contains(@text, 'Images')]"
+        "//a[.='Images']"
+    ),
+    #TODO this is not used
     "resource.virtual_machines": (
         By.XPATH,
         #"//table[@id='DataTables_Table_0']//a"
