@@ -152,13 +152,26 @@ class ComputeResource(Base):
             drop_locator=locators['resource.dropdown']
         )
 
+    #TODO internal method
+    def go_to_compute_resource(self, res_name):
+        resource = self.search(res_name)
+        #TODO if not found
+        strategy, value = locators['resource.get_by_name']
+        locator = (strategy, value % res_name)
+        self.click(locator)
+        #TODO consider better object to wait for
+        self.wait_until_element(locators['resource.virtual_machines_tab'])
+
     def list_vms(self, res_name):
+        """
         resource = self.search(res_name)
         #TODO if not found
         strategy, value = locators['resource.get_by_name']
         locator = (strategy, value % res_name)
         self.click(locator)
         self.wait_until_element(locators['resource.virtual_machines_tab'])
+        """
+        self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
         #TODO if not foud
         #vms = self.find_element(locators['resource.virtual_machines'])
@@ -167,17 +180,19 @@ class ComputeResource(Base):
             "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]" % res_name)
         return vms
 
-    #TODO it fime permits, this:
-    #def add_image(self):
-    #    pass
+    def add_image(self):
+        pass
 
     def list_images(self, res_name):
+        """
         resource = self.search(res_name)
         #TODO if not found
         strategy, value = locators['resource.get_by_name']
         locator = (strategy, value % res_name)
         self.click(locator)
         self.wait_until_element(locators['resource.images_tab'])
+        """
+        self.go_to_compute_resource(res_name)
         self.click(locators['resource.images_tab'])
         #TODO if not found
         images = self.browser.find_elements_by_xpath(
@@ -186,7 +201,20 @@ class ComputeResource(Base):
             "//table[contains(@id, 'DataTables_Table_0')]/tbody/tr/*[1]")
         return images
 
+    def vm_action_start(self, res_name, vm_name):
+        self.go_to_compute_resource(res_name)
+        self.click(locators['resource.virtual_machines_tab'])
+        pass
 
+    def vm_action_stop(self, res_name, vm_name):
+        self.go_to_compute_resource(res_name)
+        self.click(locators['resource.virtual_machines_tab'])
+        pass
+
+    def vm_action_toggle(self, res_name, vm_name):
+        self.go_to_compute_resource(res_name)
+        self.click(locators['resource.virtual_machines_tab'])
+        pass
 
     def list_compute_profiles(self):
         pass
