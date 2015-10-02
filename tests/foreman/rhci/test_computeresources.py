@@ -125,9 +125,15 @@ class ComputeResourceTestCase(UITestCase):
                 print "Image: %s" % item.text
             self.compute_resource.delete(self.rhev_name)
 
-    """
+    vm_name = "apagac2-cfme"
+
     def test_vm_start_stop(self):
-        pass
+        with Session(self.browser) as session:
+            #make_resource
+            #self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
+            #self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
+            self.compute_resource.vm_action_toggle(self.rhev_name, self.vm_name, True)
+    """
 
     def test_delete_vm(self):
         pass

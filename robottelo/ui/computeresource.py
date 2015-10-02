@@ -198,23 +198,40 @@ class ComputeResource(Base):
         images = self.browser.find_elements_by_xpath(
             #"//table[contains(@id, 'DataTables')]/tbody//tr/td[1]")
             #"//table[contains(@id, 'DataTables')]/tbody/tr/*[1]")
+            #TODO what about multiple pages? I need some paginator
             "//table[contains(@id, 'DataTables_Table_0')]/tbody/tr/*[1]")
         return images
+
+    def vm_action_stop(self, res_name, vm_name, really):
+        self.go_to_compute_resource(res_name)
+        self.click(locators['resource.virtual_machines_tab'])
+        strategy, value = locators['resource.vm.power_off_button']
+        locator = (strategy, value % vm_name)
+        self.click(locator, wait_for_ajax=False)
+        self.handle_alert(really)
+        #TODO wait for message
 
     def vm_action_start(self, res_name, vm_name):
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        pass
+        strategy, value = locators['resource.vm.power_on_button']
+        locator = (strategy, value % vm_name)
+        self.click(locator, wait_for_ajax=False)
+        #TODO wait for message
 
-    def vm_action_stop(self, res_name, vm_name):
+    def vm_action_toggle(self, res_name, vm_name, really):
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        pass
-
-    def vm_action_toggle(self, res_name, vm_name):
-        self.go_to_compute_resource(res_name)
-        self.click(locators['resource.virtual_machines_tab'])
-        pass
+        strategy, value = locators['resource.vm.toggle']
+        locator = (strategy, value % (res_name, vm_name))
+        button = self.find_element(locator)
+        if "On" in button.text:
+            self.click(locator,wait_for_ajax=False)
+            #TODO wait for message
+        else:
+            self.click(locator, wait_for_ajax=False)
+            self.handle_alert(really)
+            #TODO wait for message
 
     def list_compute_profiles(self):
         pass
