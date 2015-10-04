@@ -253,7 +253,17 @@ class ComputeResource(Base):
             #TODO wait for message
 
     def vm_delete(self, res_name, vm_name, really):
-        pass
+        self.go_to_compute_resource(res_name)
+        self.click(locators['resource.virtual_machines_tab'])
+        #TODO this is power button dropdown
+        strategy, value = locators['resource.vm.delete_button_dropdown']
+        locator = (strategy, value % (res_name, vm_name))
+        self.click(locator)
+        strategy, value = locators['resource.vm.delete_button']
+        locator = (strategy, value % (res_name, vm_name))
+        self.click(locator, wait_for_ajax=False)
+        self.handle_alert(really)
+        self.wait_until_element(common_locators['notif.success'])
 
     def list_compute_profiles(self):
         pass

@@ -892,8 +892,13 @@ locators = LocatorDict({
         #"//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]/../../*[5]//a"
         "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a"
     ),
+    "resource.vm.delete_button_dropdown": (
+        By.XPATH,
+        "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a[2]"
+    ),
     "resource.vm.delete_button": (
-        ""
+        By.XPATH,
+        "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a[.='Delete']"
     ),
 
     # Hosts
