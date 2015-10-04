@@ -892,8 +892,8 @@ locators = LocatorDict({
         #"//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]/../../*[5]//a"
         "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a"
     ),
-    resource.vm.delete_button: (
-
+    "resource.vm.delete_button": (
+        ""
     ),
 
     # Hosts

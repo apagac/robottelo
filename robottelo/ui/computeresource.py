@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 from robottelo.common.constants import FILTER
-from robottelo.ui.base import Base, UINoSuchElementError
+from robottelo.ui.base import Base, UINoSuchElementError, UIError
 from robottelo.ui.locators import common_locators, locators, tab_locators
 from robottelo.ui.navigator import Navigator
 from selenium.webdriver.support.select import Select
@@ -152,10 +152,12 @@ class ComputeResource(Base):
             drop_locator=locators['resource.dropdown']
         )
 
-    #TODO internal method
     def go_to_compute_resource(self, res_name):
         resource = self.search(res_name)
         #TODO if not found
+        if resource is None:
+            raise UINoSuchElementError(
+                'Could not find the resource {0}'.format(res_name))
         strategy, value = locators['resource.get_by_name']
         locator = (strategy, value % res_name)
         self.click(locator)
@@ -173,7 +175,6 @@ class ComputeResource(Base):
         """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        #TODO if not foud
         #vms = self.find_element(locators['resource.virtual_machines'])
         vms = self.browser.find_elements_by_xpath(
             #TODO needs correcting, see list_images
@@ -194,7 +195,6 @@ class ComputeResource(Base):
         """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.images_tab'])
-        #TODO if not found
         images = self.browser.find_elements_by_xpath(
             #"//table[contains(@id, 'DataTables')]/tbody//tr/td[1]")
             #"//table[contains(@id, 'DataTables')]/tbody/tr/*[1]")
@@ -213,12 +213,13 @@ class ComputeResource(Base):
         if 'Off' in button.text:
             self.click(locator, wait_for_ajax=False)
             self.handle_alert(really)
-            #TODO wait for message
+            self.wait_until_element(common_locators['notif.success'])
+            #element = self.find_element(common_locators['notif.success'])
+            #print element.text
         else:
-            pass
-            #TODO raise exception VM is not running
-        #self.click(locator, wait_for_ajax=False)
-        #self.handle_alert(really)
+            raise UIError(
+                'Could not stop VM {0}. VM is not running'.format(vm_name)
+            )
 
 
     def vm_action_start(self, res_name, vm_name):
@@ -231,11 +232,11 @@ class ComputeResource(Base):
         button = self.find_element(locator)
         if 'On' in button.text:
             self.click(locator,wait_for_ajax=False)
-            #TODO wait for message
+            self.wait_until_element(common_locators['notif.success'])
         else:
-            pass
-            #TODO raise exception VM is already running
-        #self.click(locator, wait_for_ajax=False)
+            raise UIError(
+                'Could not start VM {0}. VM is already running'.format(vm_name)
+            )
 
     def vm_action_toggle(self, res_name, vm_name, really):
         self.go_to_compute_resource(res_name)

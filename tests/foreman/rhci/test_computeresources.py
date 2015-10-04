@@ -130,7 +130,6 @@ class ComputeResourceTestCase(UITestCase):
 
     def test_vm_start_stop(self):
         with Session(self.browser) as session:
-            #make_resource
             make_resource(
                 name=self.rhev_name,
                 provider_type=FOREMAN_PROVIDERS['rhev'],
@@ -147,16 +146,8 @@ class ComputeResourceTestCase(UITestCase):
             )
             #TODO assuming the VM is powered down when starting this test
             #TODO RFE: find out the status of the VM
-            try:
-                self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
-            except ErrVMAlreadyRunning:
-                #TODO print an error message; continue
-
-            try:
-                self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
-            except ErrVMAlreadyDown:
-                #TODO print an error message
-
+            self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
+            self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
             self.compute_resource.delete(self.rhev_name)
 
     def test_delete_vm(self):
