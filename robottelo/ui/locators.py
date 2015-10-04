@@ -887,20 +887,13 @@ locators = LocatorDict({
         #"//a[not(contains(@data-id, 'edit')) and contains(@href, '%s')]"
         "//a[not(contains(@href, 'search')) and contains(@href, '%s')]"
     ),
-    #TODO see power_on
-    "resource.vm.power_off_button": (
-        By.XPATH, "//a[contains(@data-confirm,"
-                  "'Are you sure you want to power off %s?')]"
-    ),
-    #TODO needs to be done with NTH
-    "resource.vm.power_on_button": (
-        By.XPATH, "//a[contains(@data-confirm,"
-                  "'Are you sure you want to power on %s?')]"
-    ),
-    "resource.vm.toggle": (
+    "resource.vm.power_button": (
         By.XPATH,
         #"//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]/../../*[5]//a"
         "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a"
+    ),
+    resource.vm.delete_button: (
+
     ),
 
     # Hosts

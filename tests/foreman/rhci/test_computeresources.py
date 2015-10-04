@@ -125,19 +125,44 @@ class ComputeResourceTestCase(UITestCase):
                 print "Image: %s" % item.text
             self.compute_resource.delete(self.rhev_name)
 
+    #TODO need to set-up the VM on the resource
     vm_name = "apagac2-cfme"
 
     def test_vm_start_stop(self):
         with Session(self.browser) as session:
             #make_resource
-            #self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
-            #self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
-            self.compute_resource.vm_action_toggle(self.rhev_name, self.vm_name, True)
-    """
+            make_resource(
+                name=self.rhev_name,
+                provider_type=FOREMAN_PROVIDERS['rhev'],
+                parameter_list=[
+                    ['URL', self.rhev_hostname_api, 'field'],
+                    ['Username', self.rhev_username, 'field'],
+                    ['Password', self.rhev_password, 'field'],
+                    ['Datacenter', self.rhev_datacenter, 'special select']
+                ],
+                orgs=[self.default_org],
+                org_select=False,
+                locations=[self.default_loc],
+                loc_select=True
+            )
+            #TODO assuming the VM is powered down when starting this test
+            #TODO RFE: find out the status of the VM
+            try:
+                self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
+            except ErrVMAlreadyRunning:
+                #TODO print an error message; continue
+
+            try:
+                self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
+            except ErrVMAlreadyDown:
+                #TODO print an error message
+
+            self.compute_resource.delete(self.rhev_name)
 
     def test_delete_vm(self):
         pass
 
+    """
     def test_add_image(self):
         pass
 

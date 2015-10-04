@@ -205,24 +205,42 @@ class ComputeResource(Base):
     def vm_action_stop(self, res_name, vm_name, really):
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        strategy, value = locators['resource.vm.power_off_button']
-        locator = (strategy, value % vm_name)
-        self.click(locator, wait_for_ajax=False)
-        self.handle_alert(really)
-        #TODO wait for message
+        #strategy, value = locators['resource.vm.power_off_button']
+        strategy, value = locators['resource.vm.power_button']
+        #locator = (strategy, value % vm_name)
+        locator = (strategy, value % (res_name, vm_name))
+        button = self.find_element(locator)
+        if 'Off' in button.text:
+            self.click(locator, wait_for_ajax=False)
+            self.handle_alert(really)
+            #TODO wait for message
+        else:
+            pass
+            #TODO raise exception VM is not running
+        #self.click(locator, wait_for_ajax=False)
+        #self.handle_alert(really)
+
 
     def vm_action_start(self, res_name, vm_name):
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        strategy, value = locators['resource.vm.power_on_button']
-        locator = (strategy, value % vm_name)
-        self.click(locator, wait_for_ajax=False)
-        #TODO wait for message
+        #strategy, value = locators['resource.vm.power_on_button']
+        #locator = (strategy, value % vm_name)
+        strategy, value = locators['resource.vm.power_button']
+        locator = (strategy, value % (res_name, vm_name))
+        button = self.find_element(locator)
+        if 'On' in button.text:
+            self.click(locator,wait_for_ajax=False)
+            #TODO wait for message
+        else:
+            pass
+            #TODO raise exception VM is already running
+        #self.click(locator, wait_for_ajax=False)
 
     def vm_action_toggle(self, res_name, vm_name, really):
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        strategy, value = locators['resource.vm.toggle']
+        strategy, value = locators['resource.vm.power_button']
         locator = (strategy, value % (res_name, vm_name))
         button = self.find_element(locator)
         if "On" in button.text:
@@ -232,6 +250,9 @@ class ComputeResource(Base):
             self.click(locator, wait_for_ajax=False)
             self.handle_alert(really)
             #TODO wait for message
+
+    def vm_delete(self, res_name, vm_name, really):
+        pass
 
     def list_compute_profiles(self):
         pass
