@@ -17,7 +17,7 @@ class ComputeResourceTestCase(UITestCase):
     rhev_username = conf.properties['rhev.username']
     rhev_password = conf.properties['rhev.password']
     rhev_datacenter = conf.properties['rhev.datacenter']
-
+    #TODO for development purposes
     def test_create_delete_rhev_compute_resource(self):
         with Session(self.browser) as session:
             make_resource(
@@ -41,14 +41,81 @@ class ComputeResourceTestCase(UITestCase):
             #search = self.compute_resource.search(self.rhev_name)
             #self.assertIsNone(search)
 
-    #def test_create_vmware_compute_resource(self):
-    #    pass
+    vmware_name = conf.properties['vmware.name']
+    vmware_vcenter = conf.properties['vmware.vcenter']
+    vmware_username = conf.properties['vmware.username']
+    vmware_password = conf.properties['vmware.password']
+    vmware_datacenter = conf.properties['vmware.datacenter']
+    #TODO for development purposes
+    def test_create_vmware_compute_resource(self):
+        with Session(self.browser) as session:
+            make_resource(
+                session,
+                name=self.vmware_name,
+                provider_type=FOREMAN_PROVIDERS['vmware'],
+                parameter_list=[
+                    ['VCenter/Server', self.vmware_vcenter, 'field'],
+                    ['Username', self.vmware_username, 'field'],
+                    ['Password', self.vmware_password, 'field'],
+                    ['Datacenter', self.vmware_datacenter, 'special select']
+                ],
+                orgs=[self.default_org],
+                org_select=False,
+                locations=[self.default_loc],
+                loc_select=True
+            )
+            search = self.compute_resource.search(self.vmware_name)
+            self.assertIsNotNone(search)
+            #self.compute_resource.delete(self.vmware_name)
+            #search = self.compute_resource.search(self.vmware_name)
+            #self.assertIsNone(search)
 
     #def test_create_osp_compute_resource(self):
     #    pass
 
     #def test_create_docker_compute_resource(self):
     #    pass
+
+    @data(
+        {'name': rhev_name,
+         'provider': FOREMAN_PROVIDERS['rhev'],
+         'url': rhev_hostname_api,
+         'username': rhev_username,
+         'password': rhev_password,
+         'datacenter': rhev_datacenter,
+         #this is the name of the URL field for rhev
+         'url_name': 'URL'},
+        {'name': vmware_name,
+         'provider': FOREMAN_PROVIDERS['vmware'],
+         'url': vmware_vcenter,
+         'username': vmware_username,
+         'password': vmware_password,
+         'datacenter': vmware_datacenter,
+         #this is the name of the URL field for vmware
+         'url_name': 'VCenter/Server'}
+    )
+    def test_create_compute_resource(self):
+        with Session(self.browser) as session:
+            make_resource(
+                session,
+                name=data['name'],
+                provider_type=data['provider'],
+                parameter_list=[
+                    [data['url_name'], data['url'], 'field'],
+                    ['Username', data['username'], 'field'],
+                    ['Password', data['password'], 'field'],
+                    ['Datacenter', data['datacenter'], 'special select']
+                ],
+                orgs=[self.default_org],
+                org_select=False,
+                locations=[self.default_loc],
+                loc_select=True
+            )
+            search = self.compute_resource.search(data['name'])
+            self.assertIsNotNone(search)
+            self.compute_resource.delete(data['name'])
+            search = self.compute_resource.search(data['name'])
+            self.assertIsNone(search)
 
     @data(
         {'name': rhev_name,
@@ -81,7 +148,6 @@ class ComputeResourceTestCase(UITestCase):
             self.assertIsNotNone(search)
             self.compute_resource.delete(data['new_name'])
             self.assertIsNone(search)
-
 
     def test_retrieve_vm_list(self):
         with Session(self.browser) as session:
