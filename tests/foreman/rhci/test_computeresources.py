@@ -240,10 +240,28 @@ class ComputeResourceTestCase(UITestCase):
                                             True)
             self.compute_resource.delete(self.rhev_name)
 
-    """
-    def test_add_image(self):
-        pass
+    res = rhev_name
+    image_name = 'test_auto_img'
+    os = 'CentOS 6.6'
+    arch = 'i386'
+    uname = 'testing'
+    passw = 'testing'
+    img = 'Blank'
 
+    def test_add_image(self):
+        with Session(self.browser)as session:
+            #make_resource
+            parameter_list=[
+                ['Name', self.image_name, 'field'],
+                ['Operatingsystem', self.os, 'select'],
+                ['Architecture', self.arch, 'select'],
+                ['Username', self.uname, 'field'],
+                ['Password', self.passw, 'field'],
+                ['Image', self.img, 'select']
+            ]
+            self.compute_resource.add_image(self.res, parameter_list)
+
+    """
     def test_delete_image(self):
         pass
 

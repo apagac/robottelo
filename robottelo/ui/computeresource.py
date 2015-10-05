@@ -181,8 +181,28 @@ class ComputeResource(Base):
             "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]" % res_name)
         return vms
 
-    def add_image(self):
-        pass
+    def add_image(self, res_name, parameter_list):
+        self.go_to_compute_resource(res_name)
+        #self.click(locators['resource.images_tab'])
+        #self.wait_until_element(locators['resource.image.add'])
+        self.click(locators['resource.image.add'])
+        self.wait_until_element(locators['resource.image.name'])
+        if parameter_list is None:
+            return
+        for parameter_name, parameter_value, parameter_type in parameter_list:
+            param_locator = '.'.join((
+                'resource.image',
+                (parameter_name.lower()).replace(' ', '_')
+            ))
+            if parameter_type == 'field':
+                self.find_element(
+                    locators[param_locator]).send_keys(parameter_value)
+            elif parameter_type == 'select':
+                Select(
+                    self.find_element(locators[param_locator])
+                ).select_by_visible_text(parameter_value)
+        self.click(locators['resource.image.submit'])
+        self.wait_until_element(common_locators['notif.success'])
 
     def list_images(self, res_name):
         """

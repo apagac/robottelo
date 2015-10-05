@@ -900,6 +900,38 @@ locators = LocatorDict({
         By.XPATH,
         "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a[.='Delete']"
     ),
+    "resource.image.add": (
+        By.XPATH,
+        "//a[.='New Image']"
+    ),
+    "resource.image.name": (
+        By.ID,
+        "image_name"
+    ),
+    "resource.image.operatingsystem": (
+        By.XPATH,
+        "//select[@id='image_operatingsystem_id']"
+    ),
+    "resource.image.architecture": (
+        By.XPATH,
+        "//select[@id='image_architecture_id']"
+    ),
+    "resource.image.username": (
+        By.ID,
+        "image_username"
+    ),
+    "resource.image.password": (
+        By.ID,
+        "image_password"
+    ),
+    "resource.image.image": (
+        By.XPATH,
+        "//select[@id='image_uuid']"
+    ),
+    "resource.image.submit": (
+        By.XPATH,
+        "//input[@data-id='aid_create_image']"
+    ),
 
     # Hosts
 
