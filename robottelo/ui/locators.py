@@ -932,6 +932,10 @@ locators = LocatorDict({
         By.XPATH,
         "//input[@data-id='aid_create_image']"
     ),
+    "resource.image.delete": (
+        By.XPATH,
+        ""
+    ),
 
     # Hosts
 

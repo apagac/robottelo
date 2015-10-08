@@ -260,6 +260,7 @@ class ComputeResourceTestCase(UITestCase):
                 ['Image', self.img, 'select']
             ]
             self.compute_resource.add_image(self.res, parameter_list)
+            #TODO do a search, verify image exists
 
     """
     def test_delete_image(self):
