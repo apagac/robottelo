@@ -26,14 +26,16 @@ class ComputeResourceTestCase(UITestCase):
     vmware_vm_name=conf.properties['vmware.vm_name']
 
     @data(
-        {'name': rhev_name,
-         'provider': FOREMAN_PROVIDERS['rhev'],
-         'url': rhev_hostname_api,
-         'username': rhev_username,
-         'password': rhev_password,
-         'datacenter': rhev_datacenter,
+        #{'name': rhev_name,
+        # 'provider': FOREMAN_PROVIDERS['rhev'],
+        # 'url': rhev_hostname_api,
+        # 'username': rhev_username,
+        # 'password': rhev_password,
+        # 'datacenter': rhev_datacenter,
          #this is the label of the URL field for rhev
-         'url_name': 'URL'},
+        # 'url_name': 'URL',
+         #this is for RHEV datacenter locator
+        # 'dc_locator': 'datacenter'},
         {'name': vmware_name,
          'provider': FOREMAN_PROVIDERS['vmware'],
          'url': vmware_vcenter,
@@ -41,7 +43,9 @@ class ComputeResourceTestCase(UITestCase):
          'password': vmware_password,
          'datacenter': vmware_datacenter,
          #this is the label of the URL field for vmware
-         'url_name': 'VCenter/Server'}
+         'url_name': 'vcenterserver',
+         #this is for vmware datacenter locator
+         'dc_locator': 'datacenter_vsphere'}
     )
     def test_create_compute_resource(self, data):
         """ @Test: Create a compute resource.
@@ -59,7 +63,7 @@ class ComputeResourceTestCase(UITestCase):
                     [data['url_name'], data['url'], 'field'],
                     ['Username', data['username'], 'field'],
                     ['Password', data['password'], 'field'],
-                    ['Datacenter', data['datacenter'], 'special select']
+                    [data['dc_locator'], data['datacenter'], 'special select']
                 ],
                 orgs=[self.default_org],
                 org_select=False,

@@ -112,7 +112,8 @@ class ComputeResource(Base):
             self._configure_locations(locations, loc_select)
         if orgs:
             self._configure_orgs(orgs, org_select)
-        self.click(common_locators['submit'])
+        #self.click(common_locators['submit'])
+        self.click(common_locators['submit'], wait_for_ajax=False)
 
     def search(self, name):
         """Searches existing compute resource from UI."""

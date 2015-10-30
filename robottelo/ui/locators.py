@@ -817,9 +817,14 @@ locators = LocatorDict({
     "resource.username": (By.ID, "compute_resource_user"),
     "resource.password": (By.ID, "compute_resource_password"),
     "resource.datacenter": (By.XPATH, "//select[@id='compute_resource_uuid']"),
+    "resource.datacenter_vsphere": (By.XPATH, "//select[@id='compute_resource_datacenter']"),
     "resource.datacenter.button": (
         By.XPATH,
         "//a[contains(@data-url, '/compute_resources/test_connection')]"),
+    "resource.datacenter_vsphere.button": (
+        By.XPATH,
+        "//a[contains(@data-url, '/compute_resources/test_connection')]"),
+
     "resource.quota_id": (
         By.XPATH, "//select[@id='compute_resource_ovirt_quota']"),
     "resource.x509_certification_authorities": (
