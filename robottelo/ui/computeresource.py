@@ -142,7 +142,6 @@ class ComputeResource(Base):
 
     def delete(self, name, really=True):
         """Removes the compute resource entity"""
-        #TODO added to make delete work when called with different context
         Navigator(self.browser).go_to_compute_resources()
         self.delete_entity(
             name,
@@ -153,38 +152,31 @@ class ComputeResource(Base):
         )
 
     def go_to_compute_resource(self, res_name):
+        """ Navigates to compute resource page """
         resource = self.search(res_name)
-        #TODO if not found
         if resource is None:
             raise UINoSuchElementError(
                 'Could not find the resource {0}'.format(res_name))
         strategy, value = locators['resource.get_by_name']
         locator = (strategy, value % res_name)
         self.click(locator)
-        #TODO consider better object to wait for
         self.wait_until_element(locators['resource.virtual_machines_tab'])
 
     def list_vms(self, res_name):
-        """
-        resource = self.search(res_name)
-        #TODO if not found
-        strategy, value = locators['resource.get_by_name']
-        locator = (strategy, value % res_name)
-        self.click(locator)
-        self.wait_until_element(locators['resource.virtual_machines_tab'])
+        """ Lists vms on compute resource
+
+        note: lists only vms that show up on the first page
         """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        #vms = self.find_element(locators['resource.virtual_machines'])
         vms = self.browser.find_elements_by_xpath(
-            #TODO needs correcting, see list_images
-            "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]" % res_name)
+            "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]"
+            % res_name)
         return vms
 
     def add_image(self, res_name, parameter_list):
+        """ Adds an image to a compute resource """
         self.go_to_compute_resource(res_name)
-        #self.click(locators['resource.images_tab'])
-        #self.wait_until_element(locators['resource.image.add'])
         self.click(locators['resource.image.add'])
         self.wait_until_element(locators['resource.image.name'])
         if parameter_list is None:
@@ -205,53 +197,43 @@ class ComputeResource(Base):
         self.wait_until_element(common_locators['notif.success'])
 
     def list_images(self, res_name):
-        """
-        resource = self.search(res_name)
-        #TODO if not found
-        strategy, value = locators['resource.get_by_name']
-        locator = (strategy, value % res_name)
-        self.click(locator)
-        self.wait_until_element(locators['resource.images_tab'])
+        """ Lists images on compute resource
+
+        note: lists only images that show up on the first page
         """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.images_tab'])
         images = self.browser.find_elements_by_xpath(
-            #"//table[contains(@id, 'DataTables')]/tbody//tr/td[1]")
-            #"//table[contains(@id, 'DataTables')]/tbody/tr/*[1]")
-            #TODO what about multiple pages? I need some paginator
             "//table[contains(@id, 'DataTables_Table_0')]/tbody/tr/*[1]")
         return images
 
     def vm_action_stop(self, res_name, vm_name, really):
+        """ Stops a vm on the compute resource """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        #strategy, value = locators['resource.vm.power_off_button']
         strategy, value = locators['resource.vm.power_button']
-        #locator = (strategy, value % vm_name)
         locator = (strategy, value % (res_name, vm_name))
         button = self.find_element(locator)
         if 'Off' in button.text:
             self.click(locator, wait_for_ajax=False)
             self.handle_alert(really)
+            #note: this should probably have a timeout
             self.wait_until_element(common_locators['notif.success'])
-            #element = self.find_element(common_locators['notif.success'])
-            #print element.text
         else:
             raise UIError(
                 'Could not stop VM {0}. VM is not running'.format(vm_name)
             )
 
-
     def vm_action_start(self, res_name, vm_name):
+        """ Starts a vm on the compute resource """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        #strategy, value = locators['resource.vm.power_on_button']
-        #locator = (strategy, value % vm_name)
         strategy, value = locators['resource.vm.power_button']
         locator = (strategy, value % (res_name, vm_name))
         button = self.find_element(locator)
         if 'On' in button.text:
             self.click(locator,wait_for_ajax=False)
+            #note: this should probably have a timeout
             self.wait_until_element(common_locators['notif.success'])
         else:
             raise UIError(
@@ -259,6 +241,7 @@ class ComputeResource(Base):
             )
 
     def vm_action_toggle(self, res_name, vm_name, really):
+        """ Toggle power status of a vm on the compute resource """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
         strategy, value = locators['resource.vm.power_button']
@@ -266,16 +249,16 @@ class ComputeResource(Base):
         button = self.find_element(locator)
         if "On" in button.text:
             self.click(locator,wait_for_ajax=False)
-            #TODO wait for message
+            self.wait_until_element(common_locators['notif.success'])
         else:
             self.click(locator, wait_for_ajax=False)
             self.handle_alert(really)
-            #TODO wait for message
+            self.wait_until_element(common_locators['notif.success'])
 
     def vm_delete(self, res_name, vm_name, really):
+        """ Removes a vm from the compute resource """
         self.go_to_compute_resource(res_name)
         self.click(locators['resource.virtual_machines_tab'])
-        #TODO this is power button dropdown
         strategy, value = locators['resource.vm.delete_button_dropdown']
         locator = (strategy, value % (res_name, vm_name))
         self.click(locator)
@@ -284,6 +267,3 @@ class ComputeResource(Base):
         self.click(locator, wait_for_ajax=False)
         self.handle_alert(really)
         self.wait_until_element(common_locators['notif.success'])
-
-    def list_compute_profiles(self):
-        pass

@@ -8,7 +8,6 @@ from ddt import data, ddt
 @ddt
 class ComputeResourceTestCase(UITestCase):
 
-    #TODO create this in config file
     default_org = 'Default Organization'
     default_loc = 'Default Location'
 
@@ -17,64 +16,14 @@ class ComputeResourceTestCase(UITestCase):
     rhev_username = conf.properties['rhev.username']
     rhev_password = conf.properties['rhev.password']
     rhev_datacenter = conf.properties['rhev.datacenter']
-    #TODO for development purposes
-    def test_create_delete_rhev_compute_resource(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            search = self.compute_resource.search(self.rhev_name)
-            self.assertIsNotNone(search)
-            #self.compute_resource.delete(self.rhev_name)
-            #search = self.compute_resource.search(self.rhev_name)
-            #self.assertIsNone(search)
+    rhev_vm_name=conf.properties['rhev.vm_name']
 
     vmware_name = conf.properties['vmware.name']
     vmware_vcenter = conf.properties['vmware.vcenter']
     vmware_username = conf.properties['vmware.username']
     vmware_password = conf.properties['vmware.password']
     vmware_datacenter = conf.properties['vmware.datacenter']
-    #TODO for development purposes
-    def test_create_vmware_compute_resource(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.vmware_name,
-                provider_type=FOREMAN_PROVIDERS['vmware'],
-                parameter_list=[
-                    ['VCenter/Server', self.vmware_vcenter, 'field'],
-                    ['Username', self.vmware_username, 'field'],
-                    ['Password', self.vmware_password, 'field'],
-                    ['Datacenter', self.vmware_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            search = self.compute_resource.search(self.vmware_name)
-            self.assertIsNotNone(search)
-            #self.compute_resource.delete(self.vmware_name)
-            #search = self.compute_resource.search(self.vmware_name)
-            #self.assertIsNone(search)
-
-    #def test_create_osp_compute_resource(self):
-    #    pass
-
-    #def test_create_docker_compute_resource(self):
-    #    pass
+    vmware_vm_name=conf.properties['vmware.vm_name']
 
     @data(
         {'name': rhev_name,
@@ -83,7 +32,7 @@ class ComputeResourceTestCase(UITestCase):
          'username': rhev_username,
          'password': rhev_password,
          'datacenter': rhev_datacenter,
-         #this is the name of the URL field for rhev
+         #this is the label of the URL field for rhev
          'url_name': 'URL'},
         {'name': vmware_name,
          'provider': FOREMAN_PROVIDERS['vmware'],
@@ -91,10 +40,16 @@ class ComputeResourceTestCase(UITestCase):
          'username': vmware_username,
          'password': vmware_password,
          'datacenter': vmware_datacenter,
-         #this is the name of the URL field for vmware
+         #this is the label of the URL field for vmware
          'url_name': 'VCenter/Server'}
     )
-    def test_create_compute_resource(self):
+    def test_create_compute_resource(self, data):
+        """ @Test: Create a compute resource.
+
+        @Assert: A compute resource is created
+
+        @Feature: Compute Resource
+        """
         with Session(self.browser) as session:
             make_resource(
                 session,
@@ -113,132 +68,93 @@ class ComputeResourceTestCase(UITestCase):
             )
             search = self.compute_resource.search(data['name'])
             self.assertIsNotNone(search)
-            self.compute_resource.delete(data['name'])
-            search = self.compute_resource.search(data['name'])
-            self.assertIsNone(search)
 
     @data(
         {'name': rhev_name,
          'new_name': '%s-updated' % rhev_name},
-        #{'name': 'vmware name'},
+        {'name': vmware_name,
+         'new_name': '%s-updated' % vmware_name}
         #{'name': 'osp name'},
         #{'name': 'docker name'}
     )
     def test_edit_compute_resource(self, data):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            search = self.compute_resource.search(self.rhev_name)
-            self.assertIsNotNone(search)
-            self.compute_resource.update(name=data['name'], newname=data['new_name'])
-            search = self.compute_resource.search(data['new_name'])
-            self.assertIsNotNone(search)
-            self.compute_resource.delete(data['new_name'])
-            self.assertIsNone(search)
+        """ @Test: Edit a compute resource.
 
-    def test_retrieve_vm_list(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            for item in self.compute_resource.list_vms(self.rhev_name):
-                if item.text:
-                    print "VM: %s" % item.text
-            self.compute_resource.delete(self.rhev_name)
+        @Assert: A compute resource with new name exists
 
-    def test_retrieve_template_list(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            for item in self.compute_resource.list_images(self.rhev_name):
-                print "Image: %s" % item.text
-            self.compute_resource.delete(self.rhev_name)
+        @Feature: Compute Resource
+        """
+        search = self.compute_resource.search(data['name'])
+        self.assertIsNotNone(search)
+        self.compute_resource.update(name=data['name'],
+                                     newname=data['new_name'])
+        search = self.compute_resource.search(data['new_name'])
+        self.assertIsNotNone(search)
+        self.compute_resource.update(name=data['new_name'],
+                                     newname=data['name'])
+        search = self.compute_resource.search(data['name'])
+        self.assertIsNotNone(search)
 
-    #TODO need to set-up the VM on the resource
-    vm_name = "apagac2-cfme"
+    @data(
+        {'name': rhev_name},
+        {'name': vmware_name}
+        #{'name': 'osp name'},
+        #{'name': 'docker name'}
+    )
+    def test_retrieve_vm_list(self, data):
+        """ @Test: Retrieve list of VMs.
 
-    def test_vm_start_stop(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            #TODO assuming the VM is powered down when starting this test
-            #TODO RFE: find out the status of the VM
-            self.compute_resource.vm_action_start(self.rhev_name, self.vm_name)
-            self.compute_resource.vm_action_stop(self.rhev_name, self.vm_name, True)
-            self.compute_resource.delete(self.rhev_name)
+        @Feature: Compute Resource
+        """
+        print "%s:" % data['name']
+        for item in self.compute_resource.list_vms(data['name']):
+            if item.text:
+                print "VM: %s" % item.text
 
-    def test_delete_vm(self):
-        with Session(self.browser) as session:
-            make_resource(
-                session,
-                name=self.rhev_name,
-                provider_type=FOREMAN_PROVIDERS['rhev'],
-                parameter_list=[
-                    ['URL', self.rhev_hostname_api, 'field'],
-                    ['Username', self.rhev_username, 'field'],
-                    ['Password', self.rhev_password, 'field'],
-                    ['Datacenter', self.rhev_datacenter, 'special select']
-                ],
-                orgs=[self.default_org],
-                org_select=False,
-                locations=[self.default_loc],
-                loc_select=True
-            )
-            self.compute_resource.vm_delete(self.rhev_name,
-                                            self.vm_name,
-                                            True)
-            self.compute_resource.delete(self.rhev_name)
+    @data(
+        {'name': rhev_name},
+        {'name': vmware_name}
+        #{'name': 'osp name'},
+        #{'name': 'docker name'}
+    )
+    def test_retrieve_template_list(self, data):
+        """ @Test: Retrieve list of templates..
+
+        @Feature: Compute Resource
+        """
+        print "%s:" % data['name']
+        for item in self.compute_resource.list_images(data['name']):
+            print "Image: %s" % item.text
+
+    @data(
+        {'name': rhev_name,
+         'vm_name': rhev_vm_name},
+        {'name': vmware_name,
+         'vm_name': vmware_vm_name}
+    )
+    def test_vm_start_stop(self, data):
+        """ @Test: Start & Stop a VM.
+
+        @Feature: Compute Resource
+
+        note: assuming the VM is powered down when starting this test
+        """
+        self.compute_resource.vm_action_start(data['name'], data['vm_name'])
+        self.compute_resource.vm_action_stop(data['name'], data['vm_name'],
+                                             True)
+
+    @data(
+        {'name': rhev_name,
+         'vm_name': rhev_vm_name},
+        {'name': vmware_name,
+         'vm_name': vmware_vm_name}
+    )
+    def test_delete_vm(self, data):
+        """ @Test: Deletes a VM.
+
+        @Feature: Compute Resource
+        """
+        self.compute_resource.vm_delete(data['name'], data['vm_name'], True)
 
     res = rhev_name
     image_name = 'test_auto_img'
@@ -248,33 +164,57 @@ class ComputeResourceTestCase(UITestCase):
     passw = 'testing'
     img = 'Blank'
 
-    def test_add_image(self):
-        with Session(self.browser)as session:
-            #make_resource
-            parameter_list=[
-                ['Name', self.image_name, 'field'],
-                ['Operatingsystem', self.os, 'select'],
-                ['Architecture', self.arch, 'select'],
-                ['Username', self.uname, 'field'],
-                ['Password', self.passw, 'field'],
-                ['Image', self.img, 'select']
-            ]
-            self.compute_resource.add_image(self.res, parameter_list)
-            #TODO do a search, verify image exists
+    @data(
+        {'name': rhev_name,
+         'img_name': conf.properties['rhev.img_name'],
+         'img_os': conf.properties['rhev.img_os'],
+         'img_arch': conf.properties['rhev.img_arch'],
+         'img_uname': conf.properties['rhev.img_username'],
+         'img_passw': conf.properties['rhev.img_password'],
+         'img_img': conf.properties['rhev.img_image']},
+        {'name': vmware_name,
+         'img_name': conf.properties['vmware.img_name'],
+         'img_os': conf.properties['vmware.img_os'],
+         'img_arch': conf.properties['vmware.img_arch'],
+         'img_uname': conf.properties['vmware.img_username'],
+         'img_passw': conf.properties['vmware.img_password'],
+         'img_img': conf.properties['vmware.img_image']}
+    )
+    def test_add_image(self, data):
+        """ @Test: Adds an image to compute resource.
 
-    """
-    def test_delete_image(self):
-        pass
+        @Assert: Image added is on the first page
 
-    def test_provision_image(self):
-        pass
+        @Feature: Compute Resource
+        """
+        parameter_list=[
+            ['Name', data['img_name'], 'field'],
+            ['Operatingsystem', data['img_os'], 'select'],
+            ['Architecture', data['img_arch'], 'select'],
+            ['Username', data['img_uname'], 'field'],
+            ['Password', data['img_passw'], 'field'],
+            ['Image', data['img_img'], 'select']
+        ]
+        self.compute_resource.add_image(data['name'], parameter_list)
+        for item in self.compute_resource.list_images(data['name']):
+            if item.text == data['img_name']:
+                search = True
+        self.assertIsNotNone(search)
 
-    #default and custom compute profile
-    def test_provision_image_with_compute_profile(self):
-        pass
 
-    #to specific folder, static IP & custom spec,
-    # configure DNS & domain settings
-    def test_provision_vm(self):
-        pass
-    """
+    @data(
+        {'name': rhev_name},
+        {'name': vmware_name}
+    )
+    def test_delete_compute_resource(self, data):
+        """ @Test: Edit a compute resource.
+
+        @Assert: A compute resource with new name exists
+
+        @Feature: Compute Resource
+        """
+        search = self.compute_resource.search(data['name'])
+        self.assertIsNotNone(search)
+        self.compute_resource.delete(data['name'])
+        search = self.compute_resource.search(data['name'])
+        self.assertIsNone(search)
