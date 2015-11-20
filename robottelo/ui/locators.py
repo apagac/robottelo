@@ -817,9 +817,14 @@ locators = LocatorDict({
     "resource.username": (By.ID, "compute_resource_user"),
     "resource.password": (By.ID, "compute_resource_password"),
     "resource.datacenter": (By.XPATH, "//select[@id='compute_resource_uuid']"),
+    "resource.datacenter_vsphere": (By.XPATH, "//select[@id='compute_resource_datacenter']"),
     "resource.datacenter.button": (
         By.XPATH,
         "//a[contains(@data-url, '/compute_resources/test_connection')]"),
+    "resource.datacenter_vsphere.button": (
+        By.XPATH,
+        "//a[contains(@data-url, '/compute_resources/test_connection')]"),
+
     "resource.quota_id": (
         By.XPATH, "//select[@id='compute_resource_ovirt_quota']"),
     "resource.x509_certification_authorities": (
@@ -858,6 +863,84 @@ locators = LocatorDict({
          "/following::td/div/ul/li/a[@class='delete']")),
     "resource.edit": (
         By.XPATH, "//a[contains(@data-id,'edit') and contains(@href,'%s')]"),
+
+    # TODO testing locators
+
+    "resource.virtual_machines_tab": (
+        By.XPATH,
+        "//a[contains(@href, 'vms')]"
+    ),
+    "resource.images_tab": (
+        By.XPATH,
+        #"//a[contains(@href, 'images')]"
+        #"//a[contains(@text, 'Images')]"
+        "//a[.='Images']"
+    ),
+    #TODO this is not used
+    "resource.virtual_machines": (
+        By.XPATH,
+        #"//table[@id='DataTables_Table_0']//a"
+        #"//table[contains(@id, 'DataTables')]//*[contains(@data-id, 'vms')]"
+        #"//table[contains(@id, 'DataTables')]/../a"
+        #"//table[contains(@id, 'DataTables')]/tbody//tr/td/a"
+        #"//a[contains(@data-id, %s)]"
+        #"//a[contains(@href, %s)]"
+        "//a[contains(@href, 'vms')]"
+    ),
+    "resource.get_by_name": (
+        By.XPATH,
+        #"//a[not(contains(@data-id, 'edit')) and contains(@href, '%s')]"
+        "//a[not(contains(@href, 'search')) and contains(@href, '%s')]"
+    ),
+    "resource.vm.power_button": (
+        By.XPATH,
+        #"//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s')]/../../*[5]//a"
+        "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a"
+    ),
+    "resource.vm.delete_button_dropdown": (
+        By.XPATH,
+        "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a[2]"
+    ),
+    "resource.vm.delete_button": (
+        By.XPATH,
+        "//table[contains(@id, 'DataTables')]//a[contains(@data-id, '%s') and .='%s']/../../td[5]//a[.='Delete']"
+    ),
+    "resource.image.add": (
+        By.XPATH,
+        "//a[.='New Image']"
+    ),
+    "resource.image.name": (
+        By.ID,
+        "image_name"
+    ),
+    "resource.image.operatingsystem": (
+        By.XPATH,
+        "//select[@id='image_operatingsystem_id']"
+    ),
+    "resource.image.architecture": (
+        By.XPATH,
+        "//select[@id='image_architecture_id']"
+    ),
+    "resource.image.username": (
+        By.ID,
+        "image_username"
+    ),
+    "resource.image.password": (
+        By.ID,
+        "image_password"
+    ),
+    "resource.image.image": (
+        By.XPATH,
+        "//select[@id='image_uuid']"
+    ),
+    "resource.image.submit": (
+        By.XPATH,
+        "//input[@data-id='aid_create_image']"
+    ),
+    "resource.image.delete": (
+        By.XPATH,
+        ""
+    ),
 
     # Hosts
 
